@@ -55,6 +55,7 @@
               python-pkgs.pip
               python-pkgs.setuptools
               python-pkgs.wheel
+              #python-pkgs.nodeenv
             ]);
 
           packages.default = pkgs.writeShellScriptBin "pre-commit-wrapper" ''
@@ -73,7 +74,18 @@
             nativeBuildInputs = with pkgs;
               let
                 devpython = pkgs.python39.withPackages
-                  (packages: with packages; [ virtualenv pip setuptools wheel requests python-dotenv pathspec tiktoken pytest ]);
+                  (packages: with packages; [
+                    virtualenv
+                    #nodeenv 
+                    pip
+                    setuptools
+                    wheel
+                    requests
+                    python-dotenv
+                    pathspec
+                    tiktoken
+                    pytest
+                  ]);
               in
               [ devpython ];
           };
