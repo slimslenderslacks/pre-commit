@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 from collections.abc import Sequence
 
 from pre_commit import lang_base
@@ -19,8 +20,8 @@ in_env = lang_base.no_env  # no special environment for docker
 
 def _is_in_docker() -> bool:
     try:
-        with open('/proc/1/cgroup', 'rb') as f:
-            return b'docker' in f.read()
+        with open('/proc/self/mountinfo', 'rb') as f:
+            return b'/docker/containers' in f.read()
     except FileNotFoundError:
         return False
 
@@ -29,11 +30,14 @@ def _get_container_id() -> str:
     # It's assumed that we already check /proc/1/cgroup in _is_in_docker. The
     # cpuset cgroup controller existed since cgroups were introduced so this
     # way of getting the container ID is pretty reliable.
-    with open('/proc/1/cgroup', 'rb') as f:
+    with open('/proc/self/mountinfo', 'rb') as f:
         for line in f.readlines():
-            if line.split(b':')[1] == b'cpuset':
-                return os.path.basename(line.split(b':')[2]).strip().decode()
-    raise RuntimeError('Failed to find the container ID in /proc/1/cgroup.')
+            if line.split(b' ')[3].startswith(b'/docker/containers'):
+                p = re.compile('/docker/containers/(.*)/.*')
+                m = p.match(line.split(b' ')[3].decode())
+                if m :
+                    return m.group(1)
+    raise RuntimeError('Failed to find the container ID in /proc/1/mountinfo.')
 
 
 def _get_docker_path(path: str) -> str:
