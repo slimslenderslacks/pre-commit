@@ -57,7 +57,7 @@
               python-pkgs.wheel
             ]);
 
-          packages.default = pkgs.writeShellScriptBin "pre-commit" ''
+          packages.default = pkgs.writeShellScriptBin "pre-commit-wrapper" ''
             export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
             cd /project
             export PATH=$PATH:${pkgs.lib.makeBinPath [pkgs.git wrap-docker]}
