@@ -55,10 +55,10 @@
               python-pkgs.pip
               python-pkgs.setuptools
               python-pkgs.wheel
-              #python-pkgs.nodeenv
+              python-pkgs.nodeenv
             ]);
 
-          packages.default = pkgs.writeShellScriptBin "pre-commit-wrapper" ''
+          packages.wrapper = pkgs.writeShellScriptBin "pre-commit-wrapper" ''
             export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
             cd /project
             export PATH=$PATH:${pkgs.lib.makeBinPath [pkgs.git wrap-docker]}
@@ -69,6 +69,27 @@
                 -- "$@"
           '';
 
+          packages.commit-msg-wrapper = pkgs.writeShellScriptBin "commit-msg-wrapper" ''
+            export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+            cd /project
+            export PATH=$PATH:${pkgs.lib.makeBinPath [pkgs.git wrap-docker]}
+            ${packages.python-env}/bin/python -mpre_commit hook-impl \
+                --config=/config/pre-commit-config.yaml \
+                --hook-type=commit-msg \
+                --hook-dir /config \
+                -- "$@"
+          '';
+
+          packages.default = pkgs.buildEnv {
+            name = "install";
+            paths = [
+              packages.wrapper
+              packages.commit-msg-wrapper
+              pkgs.bash
+              pkgs.coreutils
+            ];
+          };
+
           devShells.default = pkgs.mkShell {
             name = "python";
             nativeBuildInputs = with pkgs;
@@ -76,7 +97,7 @@
                 devpython = pkgs.python39.withPackages
                   (packages: with packages; [
                     virtualenv
-                    #nodeenv 
+                    nodeenv 
                     pip
                     setuptools
                     wheel

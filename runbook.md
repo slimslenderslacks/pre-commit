@@ -18,5 +18,13 @@ docker run -it --rm \
            vonwig/pre-commit
 ```
 
-
+```sh
+docker run -it --rm \
+           -v $PWD:/project \
+           -v /var/run/docker.sock:/var/run/docker.sock \
+           --mount "type=volume,source=chatsdlc,target=/config" \
+           --mount "type=volume,source=chatsdlc-cache,target=/.cache" \
+           --entrypoint /app/result/bin/bash \
+           vonwig/pre-commit
+```
 
