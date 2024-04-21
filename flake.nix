@@ -73,6 +73,7 @@
             export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
             cd /project
             export PATH=$PATH:${pkgs.lib.makeBinPath [pkgs.git wrap-docker]}
+            ${pkgs.git}/bin/git config user.name "Jim Clark"
             ${packages.python-env}/bin/python -mpre_commit hook-impl \
                 --config=/config/pre-commit-config.yaml \
                 --hook-type=commit-msg \
