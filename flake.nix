@@ -77,7 +77,6 @@
                 --config=/config/pre-commit-config.yaml \
                 --hook-type=commit-msg \
                 --hook-dir /config \
-                --commit-msg-filename /project/.git/COMMIT_EDITMSG \
                 -- "$@"
           '';
 
