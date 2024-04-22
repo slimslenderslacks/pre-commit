@@ -63,7 +63,7 @@
             cd /project
             export PATH=$PATH:${pkgs.lib.makeBinPath [pkgs.git wrap-docker]}
             ${packages.python-env}/bin/python -mpre_commit hook-impl \
-                --config=/config/pre-commit-config.yaml \
+                --config=/project/pre-commit-config.yaml \
                 --hook-type=pre-commit \
                 --hook-dir /config \
                 -- "$@"
@@ -75,7 +75,7 @@
             export PATH=$PATH:${pkgs.lib.makeBinPath [pkgs.git wrap-docker]}
             ${pkgs.git}/bin/git config user.name "Jim Clark"
             ${packages.python-env}/bin/python -mpre_commit hook-impl \
-                --config=/config/pre-commit-config.yaml \
+                --config=/project/pre-commit-config.yaml \
                 --hook-type=commit-msg \
                 --hook-dir /config \
                 -- "$@"
